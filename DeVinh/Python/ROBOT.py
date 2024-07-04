@@ -16,41 +16,41 @@ class Vertex:
     """The vertex used in the graph below"""
 
     def __init__(self, key, data):
-        self.adjancencyList = {}
+        self.adjancency_list = {}
         self.key = key
         self.data = data
-        self.currCost = 0  # stores own weight added with followers in path
+        self.current_cost = 0  # stores own weight added with followers in path
 
     def connect(self, otherVertex, weight):
-        self.adjancencyList[otherVertex] = weight
+        self.adjancency_list[otherVertex] = weight
 
     def get_connections(self):
-        return self.adjancencyList.keys()
+        return self.adjancency_list.keys()
 
     def get_cost(self, vertex):
-        return self.adjancencyList[vertex]
+        return self.adjancency_list[vertex]
 
 
 class Graph:
     """graph used to find all paths between two nodes using DFS"""
 
     def __init__(self):
-        self.numberOfVertices = 0
+        self.number_of_vertices = 0
         self.vertices = {}
 
     def add(self, key, data):
         """adds a vertex to graph and saves vertex based on unique key"""
         if key not in self.vertices:
-            self.numberOfVertices += 1
+            self.number_of_vertices += 1
             self.vertices[key] = Vertex(key, data)
             return True
 
         return False
 
-    def addEdge(self, fromVertex, toVertex, weight):
+    def addEdge(self, vertex_head, vertex_tail, weight):
         """connects two vertices"""
-        if fromVertex in self.vertices and toVertex in self.vertices:
-            self.vertices[fromVertex].connect(toVertex, weight)
+        if vertex_head in self.vertices and vertex_tail in self.vertices:
+            self.vertices[vertex_head].connect(vertex_tail, weight)
             return True
 
         return False
@@ -62,30 +62,30 @@ class Graph:
         res = self.dfs(start, end, [], [], [])
         return sorted(res, key=lambda k: k['cost'])
 
-    def dfs(self, currVertex, destVertex, visited, path, fullPath):
+    def dfs(self, current_vertex, dest_vertex, visited, path, full_path):
         """finds all paths between two nodes, returns all paths with their respective cost"""
 
         # get vertex, it is now visited and should be added to path
-        vertex = self.vertices[currVertex]
-        visited.append(currVertex)
+        vertex = self.vertices[current_vertex]
+        visited.append(current_vertex)
         path.append(vertex.data)
 
         # save current path if we found end
-        if currVertex == destVertex:
-            fullPath.append({"path": list(path), "cost": vertex.currCost})
+        if current_vertex == dest_vertex:
+            full_path.append({"path": list(path), "cost": vertex.current_cost})
 
         for i in vertex.get_connections():
             if i not in visited:
-                self.vertices[i].currCost = vertex.get_cost(
-                    i) + vertex.currCost
-                self.dfs(i, destVertex, visited, path, fullPath)
+                self.vertices[i].current_cost = vertex.get_cost(
+                    i) + vertex.current_cost
+                self.dfs(i, dest_vertex, visited, path, full_path)
 
         # continue finding paths by popping path and visited to get accurate paths
         path.pop()
         visited.pop()
 
         if not path:
-            return fullPath
+            return full_path
 
 
 def createGraph(mat, n, m):
